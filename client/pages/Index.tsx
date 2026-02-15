@@ -127,7 +127,7 @@ export default function Index() {
       </header>
 
       {/* Hero Section */}
-      <section id="hero" className="relative min-h-screen md:h-[1080px] overflow-hidden flex items-center justify-center">
+      <section id="hero" className="relative min-h-screen md:h-[1080px] overflow-hidden flex items-center justify-center section-centered">
         {/* Background Image with Blur */}
         <div 
           className="absolute inset-0 w-full h-full"
@@ -183,7 +183,7 @@ export default function Index() {
       </section>
 
       {/* About Section */}
-      <section id="about" className="px-4 md:px-8 lg:px-[260px] py-12 md:py-20 lg:py-[100px] flex flex-col lg:flex-row justify-between items-start gap-8 md:gap-12">
+      <section id="about" className="px-4 md:px-8 lg:px-[260px] py-12 md:py-20 lg:py-[100px] flex flex-col lg:flex-row justify-between items-start gap-8 md:gap-12 section-centered">
         <div className="w-full lg:w-[711px] flex flex-col gap-8 md:gap-[61px] animate-on-scroll">
           <div className="flex flex-col gap-[35px]">
             <div className="px-5 py-[10px] rounded-[20px] bg-[#C2C2C2] inline-flex self-start shadow-[0_4px_4px_0_rgba(0,0,0,0.25)]">
@@ -218,7 +218,7 @@ export default function Index() {
       </section>
 
       {/* Projects Section */}
-      <section id="projects" className="px-4 md:px-8 lg:px-[260px] py-12 md:py-20 lg:py-[100px]">
+      <section id="projects" className="px-4 md:px-8 lg:px-[260px] py-12 md:py-20 lg:py-[100px] section-centered">
         <div className="flex flex-col items-center gap-5">
           <div className="flex flex-col items-center gap-[35px]">
             <div className="px-5 py-[10px] rounded-[20px] bg-[#C2C2C2] inline-flex">
@@ -267,7 +267,7 @@ export default function Index() {
       </section>
 
       {/* Skills Section */}
-      <section id="skills" className="px-4 md:px-8 lg:px-[260px] py-12 md:py-20 lg:py-[100px]">
+      <section id="skills" className="px-4 md:px-8 lg:px-[260px] py-12 md:py-20 lg:py-[100px] section-centered">
         <div className="flex flex-col gap-[60px] max-w-[1401px] mx-auto">
           <div className="flex flex-col gap-[35px]">
             <div className="px-5 py-[10px] rounded-[20px] bg-[#C2C2C2] inline-flex self-start">
@@ -319,7 +319,7 @@ export default function Index() {
       </section>
 
       {/* Process Section */}
-      <section id="process" className="px-4 md:px-8 lg:px-[260px] py-12 md:py-20 lg:py-[100px] bg-[#1B1B1B]">
+      <section id="process" className="px-4 md:px-8 lg:px-[260px] py-12 md:py-20 lg:py-[100px] bg-[#1B1B1B] section-centered">
         <div className="flex flex-col gap-[60px] max-w-[1401px] mx-auto">
           <div className="flex flex-col gap-[35px]">
             <div className="px-5 py-[10px] rounded-[20px] bg-[#C2C2C2] inline-flex self-start">
@@ -381,7 +381,7 @@ export default function Index() {
       </section>
 
       {/* Contact Section */}
-      <section id="contact" className="px-4 md:px-8 lg:px-[260px] py-12 md:py-20 lg:py-[100px]">
+      <section id="contact" className="px-4 md:px-8 lg:px-[260px] py-12 md:py-20 lg:py-[100px] section-centered">
         <div className="flex flex-col gap-[56px] max-w-[1401px] mx-auto">
           <div className="flex flex-col items-center gap-[35px]">
             <div className="px-5 py-[10px] rounded-[20px] bg-[#C2C2C2] inline-flex">

@@ -343,3 +343,21 @@
 .animate-glow {
   animation: glow 2s ease-in-out infinite;
 }
+
+/* Centered page container to avoid excessive side paddings on very wide screens */
+.section-centered {
+  max-width: 1400px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem; /* fallback */
+  padding-right: 1rem; /* fallback */
+}
+
+@media (min-width: 1280px) {
+  .section-centered { padding-left: 2rem; padding-right: 2rem; }
+}
+
+@media (min-width: 1920px) {
+  /* cap the inner horizontal padding on ultra-wide screens */
+  .section-centered { padding-left: 4rem; padding-right: 4rem; }
+}
