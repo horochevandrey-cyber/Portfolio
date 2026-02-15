@@ -3,16 +3,14 @@
     {
       "src": "package.json",
       "use": "@vercel/static-build",
-      "config": { "distDir": "dist" }
+      "config": { "distDir": "dist/spa" }
     }
   ],
-  "buildCommand": "pnpm run build",
+  "buildCommand": "pnpm run build:client",
   "cleanUrls": true,
   "routes": [
     { "handle": "filesystem" },
-    { "src": "^/favicon.ico$", "dest": "/spa/favicon.ico" },
-    { "src": "^/(?:assets|images|robots.txt|placeholder.svg|favicon.png|favicon.ico)/(.*)", "dest": "/spa/$0" },
-    { "src": "^/$", "dest": "/spa/index.html" },
-    { "src": "^/(.*)", "dest": "/spa/index.html" }
+    { "src": "^/(.*)$", "dest": "/$1" },
+    { "src": "^/(.*)$", "dest": "/index.html" }
   ]
 }
