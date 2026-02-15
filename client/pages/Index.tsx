@@ -80,7 +80,7 @@ export default function Index() {
     
     setIsSubmitting(true);
     try {
-      const response = await fetch('https://formspree.io/f/xwpkevon', {
+      const response = await fetch('https://formspree.io/f/mojndzkp', {
         method: 'POST',
         body: JSON.stringify(formData),
         headers: { 'Content-Type': 'application/json' },
