@@ -8,10 +8,8 @@
   ],
   "buildCommand": "pnpm run build:client",
   "cleanUrls": true,
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
-  ],
   "routes": [
+    { "handle": "filesystem" },
     { "src": "/favicon.ico", "dest": "/favicon.ico" },
     { "src": "/(.*)", "dest": "/index.html" }
   ]
