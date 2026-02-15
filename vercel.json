@@ -6,7 +6,13 @@
       "config": { "distDir": "dist/spa" }
     }
   ],
+  "buildCommand": "pnpm run build:client",
+  "cleanUrls": true,
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ],
   "routes": [
+    { "src": "/favicon.ico", "dest": "/favicon.ico" },
     { "src": "/(.*)", "dest": "/index.html" }
   ]
 }
