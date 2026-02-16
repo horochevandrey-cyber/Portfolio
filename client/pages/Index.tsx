@@ -1,10 +1,47 @@
 import React from 'react';
+import { MobileMenu } from '@/components/MobileMenu';
+import { ArrowDown, Sparkles, Zap, Layers, ArrowUpRight, Palette, Monitor, Smartphone } from 'lucide-react';
 
 export default function Index() {
   const [formData, setFormData] = React.useState({ name: '', email: '', message: '' });
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [isScrolled, setIsScrolled] = React.useState(false);
   const [emailCopied, setEmailCopied] = React.useState(false);
+  const [mousePosition, setMousePosition] = React.useState({ x: 0, y: 0 });
+
+  // Плавный параллакс для фона Hero секции
+  React.useEffect(() => {
+    let rafId: number;
+    const targetPosition = { x: 0, y: 0 };
+    const currentPosition = { x: 0, y: 0 };
+
+    const handleMouseMove = (e: MouseEvent) => {
+      // Нормализуем координаты от -1 до 1
+      targetPosition.x = (e.clientX / window.innerWidth) * 2 - 1;
+      targetPosition.y = (e.clientY / window.innerHeight) * 2 - 1;
+    };
+
+    const animate = () => {
+      // Плавная интерполяция (easing)
+      currentPosition.x += (targetPosition.x - currentPosition.x) * 0.05;
+      currentPosition.y += (targetPosition.y - currentPosition.y) * 0.05;
+
+      setMousePosition({
+        x: currentPosition.x * 30, // Смещение в пикселях
+        y: currentPosition.y * 30,
+      });
+
+      rafId = requestAnimationFrame(animate);
+    };
+
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
+    animate();
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      cancelAnimationFrame(rafId);
+    };
+  }, []);
 
   React.useEffect(() => {
     const handleScroll = () => {
@@ -105,16 +142,19 @@ export default function Index() {
     <div className="bg-[#171717] text-white overflow-x-hidden">
       {/* Sticky Header on Scroll */}
       <header className={`fixed top-0 left-0 right-0 z-50 px-4 md:px-8 lg:px-[260px] py-4 md:py-6 flex justify-between items-center transition-all duration-200 ${
-        isScrolled 
-          ? 'bg-[#171717]/95 backdrop-blur-md border-b border-[#313131] shadow-lg' 
+        isScrolled
+          ? 'bg-[#171717]/95 backdrop-blur-md border-b border-[#313131] shadow-lg'
           : 'bg-transparent'
       }`}>
         <div className={`text-sm md:text-base font-bold transition-opacity duration-200 ${isScrolled ? 'opacity-100' : 'opacity-0'}`}>Andrey Horochev</div>
-        <nav className={`hidden md:flex gap-8 transition-opacity duration-200 ${isScrolled ? 'opacity-100' : 'opacity-0'}`}>
-          <button onClick={() => scrollToSection('projects')} className="text-sm font-medium hover:text-white transition-colors">Проекты</button>
-          <button onClick={() => scrollToSection('skills')} className="text-sm font-medium hover:text-white transition-colors">Навыки</button>
-          <button onClick={() => scrollToSection('contact')} className="text-sm font-medium hover:text-white transition-colors">Контакт</button>
-        </nav>
+        <div className="flex items-center gap-4">
+          <nav className={`hidden md:flex gap-8 transition-opacity duration-200 ${isScrolled ? 'opacity-100' : 'opacity-0'}`}>
+            <button onClick={() => scrollToSection('projects')} className="text-sm font-medium hover:text-white transition-colors">Проекты</button>
+            <button onClick={() => scrollToSection('skills')} className="text-sm font-medium hover:text-white transition-colors">Навыки</button>
+            <button onClick={() => scrollToSection('contact')} className="text-sm font-medium hover:text-white transition-colors">Контакт</button>
+          </nav>
+          <MobileMenu onNavigate={scrollToSection} />
+        </div>
       </header>
 
       {/* Regular Header */}
@@ -128,62 +168,111 @@ export default function Index() {
 
       {/* Hero Section */}
       <section id="hero" className="relative min-h-screen md:h-[1080px] overflow-hidden flex items-center justify-center">
-        {/* Background Image with Blur */}
-        <div 
-          className="absolute inset-0 w-full h-full"
+        {/* Animated Background Particles */}
+        <div className="absolute inset-0 overflow-hidden">
+          {[...Array(30)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute w-1 h-1 bg-white/20 rounded-full animate-pulse"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                animationDelay: `${Math.random() * 3}s`,
+                animationDuration: `${2 + Math.random() * 3}s`,
+              }}
+            />
+          ))}
+        </div>
+
+        {/* Parallax Background Image */}
+        <div
+          className="absolute inset-0 w-full h-full transition-transform duration-100 ease-out"
           style={{
-            backgroundImage: 'url(https://api.builder.io/api/v1/image/assets/TEMP/6974cf6cc7ac95437e5f301c41c607b58af75ed6?width=3840)',
+            backgroundImage: 'url(/images/BackGround.jpg)',
             backgroundSize: 'cover',
             backgroundPosition: 'center',
-            filter: 'blur(12.5px)',
+            transform: `translate(${mousePosition.x}px, ${mousePosition.y}px) scale(1.05)`,
+            filter: 'blur(8px)',
           }}
         />
+
+        {/* Gradient Overlay with Vignette */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/50" />
         
-        {/* Dark overlay with blur */}
+        {/* Radial gradient for subtle focus effect */}
+        <div 
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background: 'radial-gradient(ellipse at center, transparent 0%, rgba(0,0,0,0.3) 100%)',
+          }}
+        />
+
+        {/* Dark overlay */}
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] md:w-[1074px] h-[70%] md:h-[766px] bg-black/60" style={{ filter: 'blur(50px)' }} />
+
+        {/* Gradient Orbs */}
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-white/5 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-white/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
 
         {/* Content */}
         <div className="relative z-10 flex flex-col items-center gap-8 md:gap-[60px] max-w-[895px] px-4 md:px-8">
-          {/* Available Badge */}
-          <div className="px-[15px] py-[14px] rounded-[15px] bg-white/10">
-            <span className="text-[#F8F8F8] text-sm md:text-base font-normal">Доступен для новых проектов</span>
+          {/* Available Badge with Animation */}
+          <div className="px-[15px] py-[14px] rounded-[15px] bg-white/10 backdrop-blur-sm border border-white/20 hover:border-white/40 hover:scale-105 transition-all duration-300 group animate-fade-in-up">
+            <span className="text-white text-sm md:text-base font-normal flex items-center gap-2">
+              <Sparkles className="w-4 h-4 group-hover:rotate-12 transition-transform" />
+              Доступен для новых проектов
+            </span>
           </div>
 
           {/* Main Heading and Subheading */}
-          <div className="flex flex-col gap-[10px] w-full animate-fade-in-up">
-            <h1 className="text-4xl md:text-6xl lg:text-[96px] font-bold text-[#F8F8F8] text-center leading-none">
-              Создаю цифровые впечатления
+          <div className="flex flex-col gap-[10px] w-full">
+            <h1 className="text-4xl md:text-6xl lg:text-[96px] font-bold text-white text-center leading-none animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
+              <span className="inline-block bg-gradient-to-r from-white via-gray-200 to-white bg-clip-text animate-gradient">
+                Создаю цифровые
+              </span>
+              <br />
+              <span className="inline-block bg-gradient-to-r from-white via-gray-300 to-white bg-clip-text animate-gradient" style={{ animationDelay: '0.2s' }}>
+                впечатления
+              </span>
             </h1>
-            <h2 className="text-lg md:text-2xl lg:text-[32px] text-[#F8F8F8] text-center leading-none mt-2 md:mt-0">
+            <h2 className="text-lg md:text-2xl lg:text-[32px] text-white text-center leading-none mt-2 md:mt-0 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
               <span className="font-normal">Привет! Я </span>
               <span className="font-bold">Андрей Хорошев</span>
               <span className="font-normal">, веб-дизайнер</span>
             </h2>
-            <p className="text-base md:text-xl lg:text-2xl text-[#CFCFCF] text-center leading-[150%] mt-4">
+            <p className="text-base md:text-xl lg:text-2xl text-[#CFCFCF] text-center leading-[150%] mt-4 animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
               Специализируюсь на создании современных и функциональных интерфейсов, которые решают бизнес-задачи и радуют пользователей
             </p>
           </div>
 
           {/* CTA Buttons */}
-          <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8 lg:gap-[100px] w-full md:w-auto animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
-            <button 
+          <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8 lg:gap-[100px] w-full md:w-auto animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
+            <button
               onClick={() => scrollToSection('projects')}
-              className="w-full md:w-auto px-4 md:px-5 py-3 md:py-5 rounded-[25px] bg-transparent border-2 border-white text-white text-lg md:text-xl lg:text-[26px] font-bold hover:bg-white hover:text-black hover:shadow-[0_0_15px_rgba(255,255,255,0.2)] hover:scale-105 transition-all duration-300 whitespace-nowrap"
+              className="group w-full md:w-auto px-4 md:px-5 py-3 md:py-5 rounded-[25px] bg-transparent border-2 border-white text-white text-lg md:text-xl lg:text-[26px] font-bold hover:bg-white hover:text-black hover:shadow-[0_0_30px_rgba(255,255,255,0.3)] hover:scale-105 transition-all duration-300 whitespace-nowrap flex items-center justify-center gap-2"
             >
               Посмотреть работы
+              <ArrowDown className="w-5 h-5 group-hover:translate-y-1 transition-transform" />
             </button>
-            <button 
+            <button
               onClick={() => scrollToSection('contact')}
-              className="w-full md:w-auto px-4 md:px-5 py-3 md:py-5 rounded-[20px] bg-white/10 border border-white/70 text-white text-lg md:text-xl lg:text-[26px] font-bold hover:bg-white/20 hover:border-white hover:shadow-[0_0_15px_rgba(255,255,255,0.15)] transition-all duration-300 whitespace-nowrap"
+              className="group w-full md:w-auto px-4 md:px-5 py-3 md:py-5 rounded-[20px] bg-white/10 border border-white/70 text-white text-lg md:text-xl lg:text-[26px] font-bold hover:bg-white/20 hover:border-white hover:shadow-[0_0_20px_rgba(255,255,255,0.2)] hover:scale-105 transition-all duration-300 whitespace-nowrap flex items-center justify-center gap-2"
             >
+              <Zap className="w-5 h-5 group-hover:scale-110 transition-transform" />
               Связаться со мной
             </button>
+          </div>
+
+          {/* Scroll Indicator */}
+          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-bounce">
+            <Layers className="w-5 h-5 text-white/50" />
+            <div className="w-px h-12 bg-gradient-to-b from-white/50 to-transparent" />
           </div>
         </div>
       </section>
 
       {/* About Section */}
-      <section id="about" className="px-4 md:px-8 lg:px-[260px] py-12 md:py-20 lg:py-[100px] flex flex-col lg:flex-row justify-between items-start gap-8 md:gap-12">
+      <section id="about" className="px-4 md:px-8 lg:px-[260px] xl:px-[320px] 2xl:px-[400px] py-12 md:py-20 lg:py-[100px] flex flex-col lg:flex-row justify-between items-start gap-8 md:gap-12">
         <div className="w-full lg:w-[711px] flex flex-col gap-8 md:gap-[61px] animate-on-scroll">
           <div className="flex flex-col gap-[35px]">
             <div className="px-5 py-[10px] rounded-[20px] bg-[#C2C2C2] inline-flex self-start shadow-[0_4px_4px_0_rgba(0,0,0,0.25)]">
@@ -192,12 +281,12 @@ export default function Index() {
           </div>
 
           <div className="flex flex-col gap-8 md:gap-[58px]">
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#F8F8F8] leading-none">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-none">
               Делаю интерфейсы, которые продают и удерживают
             </h2>
-            
+
             <div className="w-[257px] h-[3px] rounded-[2px] bg-[#D9D9D9]" />
-            
+
             <p className="text-base md:text-lg lg:text-[22px] text-[#D3D3D3] leading-[150%]">
               Привет! Меня зовут Андрей. 4 года целенаправленного обучения веб-дизайну: от основ композиции и типографики до Figma mastery, user flows, accessibility и motion-дизайна.
               <br /><br />
@@ -209,16 +298,18 @@ export default function Index() {
         </div>
 
         <div className="w-full lg:w-[572px] h-auto overflow-hidden rounded-[30px] md:rounded-[50px] shadow-[0_20px_40px_0_rgba(0,0,0,0.25)] flex-shrink-0 hover:shadow-[0_30px_60px_0_rgba(255,255,255,0.15)] transition-all duration-500 group animate-on-scroll opacity-0">
-          <img 
-            src="/images/About.png"
-            alt="Andrey Horoshev"
-            className="w-full h-auto object-cover display-block group-hover:scale-105 transition-transform duration-500"
-          />
+          <div className="relative w-full overflow-hidden rounded-[30px] md:rounded-[50px]">
+            <img
+              src="/images/About.png"
+              alt="Andrey Horoshev"
+              className="w-full h-auto object-cover display-block group-hover:scale-105 transition-transform duration-500"
+            />
+          </div>
         </div>
       </section>
 
       {/* Projects Section */}
-      <section id="projects" className="px-4 md:px-8 lg:px-[260px] py-12 md:py-20 lg:py-[100px]">
+      <section id="projects" className="px-4 md:px-8 lg:px-[260px] xl:px-[320px] 2xl:px-[400px] py-12 md:py-20 lg:py-[100px]">
         <div className="flex flex-col items-center gap-5">
           <div className="flex flex-col items-center gap-[35px]">
             <div className="px-5 py-[10px] rounded-[20px] bg-[#C2C2C2] inline-flex">
@@ -229,37 +320,45 @@ export default function Index() {
           <div className="w-[257px] h-[3px] rounded-[2px] bg-[#D9D9D9]" />
 
           {/* Project Grid */}
-          <div className="flex flex-col gap-4 md:gap-5 w-full mt-6 md:mt-8 section-centered">
-            <div className="flex flex-col lg:flex-row justify-center lg:justify-between gap-4 md:gap-5">
+          <div className="flex flex-col gap-4 md:gap-5 w-full mt-6 md:mt-8">
+            <div className="flex flex-col lg:flex-row justify-center lg:justify-between gap-4 md:gap-5 w-full">
               <ProjectCard
                 name="AM:Rent"
                 year="2026"
                 category="Web-design"
+                tags={['UI/UX', 'Web', 'Premium']}
                 image="/images/FirstProject.png"
                 figmaLink="https://www.figma.com/design/mLYeS3ayi3XMqMN3tMg0qV/Aston-Martin-Rent?node-id=0-1&t=T2JHARgEnRFDoPbf-1"
+                delay={0}
               />
               <ProjectCard
                 name="StroyLine"
                 year="2026"
                 category="Web-design"
+                tags={['UI/UX', 'Web', 'Corporate']}
                 image="/images/SecondProject.png"
-                figmaLink="https://www.figma.com/design/6IS36G8I8lRVjdRS7J234f/STROYLINE?node-id=77-485&t=T2JHARgEnRFDoPbf-1" 
+                figmaLink="https://www.figma.com/design/6IS36G8I8lRVjdRS7J234f/STROYLINE?node-id=77-485&t=T2JHARgEnRFDoPbf-1"
+                delay={0.1}
               />
             </div>
-            <div className="flex flex-col lg:flex-row justify-center lg:justify-between gap-4 md:gap-5">
+            <div className="flex flex-col lg:flex-row justify-center lg:justify-between gap-4 md:gap-5 w-full">
               <ProjectCard
                 name="ParkIt"
                 year="2025"
                 category="Mobile-App-Design"
+                tags={['Mobile', 'iOS', 'Android']}
                 image="/images/ThirdProject.png"
                 figmaLink="https://www.figma.com/design/6H9EblbkWg8WUqGLHCPTDp/Parkit?t=T2JHARgEnRFDoPbf-1"
+                delay={0.2}
               />
               <ProjectCard
                 name="VolnaFest"
                 year="2025"
                 category="Web-Design"
+                tags={['Web', 'Event', 'Creative']}
                 image="/images/FourthProject.png"
                 figmaLink="https://www.figma.com/design/OHrdvbOQRVp13OnzNl82uf/VolnaFest?t=T2JHARgEnRFDoPbf-1"
+                delay={0.3}
               />
             </div>
           </div>
@@ -267,13 +366,13 @@ export default function Index() {
       </section>
 
       {/* Skills Section */}
-      <section id="skills" className="px-4 md:px-8 lg:px-[260px] py-12 md:py-20 lg:py-[100px]">
+      <section id="skills" className="px-4 md:px-8 lg:px-[260px] xl:px-[320px] 2xl:px-[400px] py-12 md:py-20 lg:py-[100px]">
         <div className="flex flex-col gap-[60px] max-w-[1401px] mx-auto">
           <div className="flex flex-col gap-[35px]">
             <div className="px-5 py-[10px] rounded-[20px] bg-[#C2C2C2] inline-flex self-start">
               <span className="text-[#171717] text-base font-normal">МОИ НАВЫКИ</span>
             </div>
-            <p className="text-xl md:text-2xl text-[#F8F8F8] font-normal">Мои сильные стороны в дизайне</p>
+            <p className="text-xl md:text-2xl text-white font-normal">Мои сильные стороны в дизайне</p>
           </div>
 
           {/* Skills Grid */}
@@ -319,13 +418,13 @@ export default function Index() {
       </section>
 
       {/* Process Section */}
-      <section id="process" className="px-4 md:px-8 lg:px-[260px] py-12 md:py-20 lg:py-[100px] bg-[#1B1B1B]">
+      <section id="process" className="px-4 md:px-8 lg:px-[260px] xl:px-[320px] 2xl:px-[400px] py-12 md:py-20 lg:py-[100px] bg-[#1B1B1B]">
         <div className="flex flex-col gap-[60px] max-w-[1401px] mx-auto">
           <div className="flex flex-col gap-[35px]">
             <div className="px-5 py-[10px] rounded-[20px] bg-[#C2C2C2] inline-flex self-start">
               <span className="text-[#171717] text-base font-normal">МОЙ ПРОЦЕСС</span>
             </div>
-            <p className="text-xl md:text-2xl text-[#F8F8F8] font-normal max-w-[600px]">Как я работаю с клиентами</p>
+            <p className="text-xl md:text-2xl text-white font-normal max-w-[600px]">Как я работаю с клиентами</p>
           </div>
 
           {/* Process Steps */}
@@ -337,7 +436,7 @@ export default function Index() {
                 <div className="w-1 h-12 md:h-16 bg-[#313131] mt-4 group-hover:bg-white transition-colors duration-300" />
               </div>
               <div className="flex-1 pt-2 pb-8 md:pb-12 group-hover:translate-x-2 transition-transform duration-300">
-                <h3 className="text-xl md:text-2xl font-semibold text-[#F8F8F8] mb-2">Discovery</h3>
+                <h3 className="text-xl md:text-2xl font-semibold text-white mb-2">Discovery</h3>
                 <p className="text-base md:text-lg text-[#D3D3D3] leading-[150%]">Обсуждение целей, аудитории, требований и вашего видения. Я изучаю конкурентов и создаю стратегию.</p>
               </div>
             </div>
@@ -349,7 +448,7 @@ export default function Index() {
                 <div className="w-1 h-12 md:h-16 bg-[#313131] mt-4 group-hover:bg-white transition-colors duration-300" />
               </div>
               <div className="flex-1 pt-2 pb-8 md:pb-12 group-hover:translate-x-2 transition-transform duration-300">
-                <h3 className="text-xl md:text-2xl font-semibold text-[#F8F8F8] mb-2">Design</h3>
+                <h3 className="text-xl md:text-2xl font-semibold text-white mb-2">Design</h3>
                 <p className="text-base md:text-lg text-[#D3D3D3] leading-[150%]">Создание макетов, прототипов и интерактивных прототипов в Figma. Фокус на UX и визуальной иерархии.</p>
               </div>
             </div>
@@ -361,7 +460,7 @@ export default function Index() {
                 <div className="w-1 h-12 md:h-16 bg-[#313131] mt-4 group-hover:bg-white transition-colors duration-300" />
               </div>
               <div className="flex-1 pt-2 pb-8 md:pb-12 group-hover:translate-x-2 transition-transform duration-300">
-                <h3 className="text-xl md:text-2xl font-semibold text-[#F8F8F8] mb-2">Feedback</h3>
+                <h3 className="text-xl md:text-2xl font-semibold text-white mb-2">Feedback</h3>
                 <p className="text-base md:text-lg text-[#D3D3D3] leading-[150%]">Презентация дизайна, сбор обратной связи и итерации. Все изменения согласовываются с вами.</p>
               </div>
             </div>
@@ -372,7 +471,7 @@ export default function Index() {
                 <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-white text-black flex items-center justify-center text-xl md:text-2xl font-bold flex-shrink-0 group-hover:scale-110 group-hover:shadow-[0_0_15px_rgba(255,255,255,0.3)] transition-all duration-300">4</div>
               </div>
               <div className="flex-1 pt-2 group-hover:translate-x-2 transition-transform duration-300">
-                <h3 className="text-xl md:text-2xl font-semibold text-[#F8F8F8] mb-2">Launch</h3>
+                <h3 className="text-xl md:text-2xl font-semibold text-white mb-2">Launch</h3>
                 <p className="text-base md:text-lg text-[#D3D3D3] leading-[150%]">Подготовка к разработке, передача файлов и поддержка после запуска.</p>
               </div>
             </div>
@@ -381,13 +480,13 @@ export default function Index() {
       </section>
 
       {/* Contact Section */}
-      <section id="contact" className="px-4 md:px-8 lg:px-[260px] py-12 md:py-20 lg:py-[100px]">
+      <section id="contact" className="px-4 md:px-8 lg:px-[260px] xl:px-[320px] 2xl:px-[400px] py-12 md:py-20 lg:py-[100px]">
         <div className="flex flex-col gap-[56px] max-w-[1401px] mx-auto">
           <div className="flex flex-col items-center gap-[35px]">
             <div className="px-5 py-[10px] rounded-[20px] bg-[#C2C2C2] inline-flex">
               <span className="text-[#171717] text-base font-normal">СВЯЗЬ</span>
             </div>
-            <p className="text-xl md:text-2xl text-[#F8F8F8] font-normal">Связаться со мной</p>
+            <p className="text-xl md:text-2xl text-white font-normal">Связаться со мной</p>
             <div className="w-[257px] h-[3px] rounded-[2px] bg-[#D9D9D9]" />
           </div>
 
@@ -400,7 +499,7 @@ export default function Index() {
                 placeholder="Ваше имя"
                 value={formData.name}
                 onChange={handleFormChange}
-                className="w-full px-6 py-4 rounded-[16px] bg-[#23272F] border border-white/20 text-[#F8F8F8] placeholder-[#808080] focus:border-white focus:outline-none focus:shadow-[0_0_15px_rgba(255,255,255,0.15)] focus:ring-1 focus:ring-white/20 transition-all duration-300"
+                className="w-full px-6 py-4 rounded-[16px] bg-[#23272F] border border-white/20 text-white placeholder-[#808080] focus:border-white focus:outline-none focus:shadow-[0_0_15px_rgba(255,255,255,0.15)] focus:ring-1 focus:ring-white/20 transition-all duration-300"
               />
               <input
                 type="email"
@@ -408,7 +507,7 @@ export default function Index() {
                 placeholder="Ваш email"
                 value={formData.email}
                 onChange={handleFormChange}
-                className="w-full px-6 py-4 rounded-[16px] bg-[#23272F] border border-white/20 text-[#F8F8F8] placeholder-[#808080] focus:border-white focus:outline-none focus:shadow-[0_0_15px_rgba(255,255,255,0.15)] focus:ring-1 focus:ring-white/20 transition-all duration-300"
+                className="w-full px-6 py-4 rounded-[16px] bg-[#23272F] border border-white/20 text-white placeholder-[#808080] focus:border-white focus:outline-none focus:shadow-[0_0_15px_rgba(255,255,255,0.15)] focus:ring-1 focus:ring-white/20 transition-all duration-300"
               />
               <textarea
                 name="message"
@@ -416,7 +515,7 @@ export default function Index() {
                 value={formData.message}
                 onChange={handleFormChange}
                 rows={5}
-                className="w-full px-6 py-4 rounded-[16px] bg-[#23272F] border border-white/20 text-[#F8F8F8] placeholder-[#808080] focus:border-white focus:outline-none focus:shadow-[0_0_15px_rgba(255,255,255,0.15)] focus:ring-1 focus:ring-white/20 transition-all duration-300 resize-none"
+                className="w-full px-6 py-4 rounded-[16px] bg-[#23272F] border border-white/20 text-white placeholder-[#808080] focus:border-white focus:outline-none focus:shadow-[0_0_15px_rgba(255,255,255,0.15)] focus:ring-1 focus:ring-white/20 transition-all duration-300 resize-none"
               />
               <button
                 type="submit"
@@ -446,7 +545,7 @@ export default function Index() {
               </a>
               <button
                 onClick={handleCopyEmail}
-                className="flex-1 md:flex-initial px-6 py-3 rounded-[16px] bg-[#23272F] border border-white/30 text-[#F8F8F8] font-semibold hover:border-white hover:bg-white/10 hover:shadow-[0_0_15px_rgba(255,255,255,0.15)] transition-all duration-300 text-center"
+                className="flex-1 md:flex-initial px-6 py-3 rounded-[16px] bg-[#23272F] border border-white/30 text-white font-semibold hover:border-white hover:bg-white/10 hover:shadow-[0_0_15px_rgba(255,255,255,0.15)] transition-all duration-300 text-center"
               >
                 {emailCopied ? '✓ Скопирована!' : 'Email'}
               </button>
@@ -456,18 +555,18 @@ export default function Index() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-[#1B1B1B] border-t border-[#313131] px-4 md:px-8 lg:px-[260px] py-8 md:py-10">
+      <footer className="bg-[#1B1B1B] border-t border-[#313131] px-4 md:px-8 lg:px-[260px] xl:px-[320px] 2xl:px-[400px] py-8 md:py-10">
         <div className="max-w-[1400px] mx-auto flex flex-col md:flex-row items-center md:items-center justify-between gap-6 md:gap-0">
           <div className="flex flex-col items-center md:items-start gap-1">
-            <span className="text-xl md:text-2xl font-bold tracking-tight text-[#F8F8F8]">Andrey Horochev</span>
+            <span className="text-xl md:text-2xl font-bold tracking-tight text-white">Andrey Horochev</span>
             <span className="text-sm md:text-base text-[#A0A0A0] font-normal">© 2026. Все права защищены</span>
           </div>
           <div className="hidden md:block w-px h-10 bg-[#313131] mx-8" />
           <div className="flex flex-col md:flex-row items-center gap-2 md:gap-6">
-            <button onClick={() => scrollToSection('hero')} className="text-base md:text-lg font-medium text-[#F8F8F8] hover:text-[#C2C2C2] transition-colors">Главная</button>
-            <button onClick={() => scrollToSection('projects')} className="text-base md:text-lg font-medium text-[#F8F8F8] hover:text-[#C2C2C2] transition-colors">Проекты</button>
-            <button onClick={() => scrollToSection('skills')} className="text-base md:text-lg font-medium text-[#F8F8F8] hover:text-[#C2C2C2] transition-colors">Навыки</button>
-            <button onClick={() => scrollToSection('contact')} className="text-base md:text-lg font-medium text-[#F8F8F8] hover:text-[#C2C2C2] transition-colors">Связь</button>
+            <button onClick={() => scrollToSection('hero')} className="text-base md:text-lg font-medium text-white hover:text-[#C2C2C2] transition-colors">Главная</button>
+            <button onClick={() => scrollToSection('projects')} className="text-base md:text-lg font-medium text-white hover:text-[#C2C2C2] transition-colors">Проекты</button>
+            <button onClick={() => scrollToSection('skills')} className="text-base md:text-lg font-medium text-white hover:text-[#C2C2C2] transition-colors">Навыки</button>
+            <button onClick={() => scrollToSection('contact')} className="text-base md:text-lg font-medium text-white hover:text-[#C2C2C2] transition-colors">Связь</button>
           </div>
         </div>
       </footer>
@@ -480,8 +579,8 @@ function SkillCard({ title, description, icon }: { title: string; description: s
   return (
     <div className="w-full md:w-[453.667px] h-auto md:h-[255px] rounded-[20px] bg-white/8 border border-white/10 p-6 md:p-[35px] flex flex-col justify-center gap-3 md:gap-4 hover:bg-white/12 hover:border-white/30 hover:scale-103 hover:shadow-[0_10px_30px_rgba(255,255,255,0.15)] transition-all duration-300 group animate-on-scroll opacity-0">
       <div className="flex justify-center md:justify-start group-hover:[&_svg]:text-white transition-all duration-300">{icon}</div>
-      <h3 className="text-xl md:text-2xl font-semibold text-[#F8F8F8] text-center md:text-left">{title}</h3>
-      <p className="text-base md:text-xl text-[#F8F8F8] text-center md:text-left">{description}</p>
+      <h3 className="text-xl md:text-2xl font-semibold text-white text-center md:text-left">{title}</h3>
+      <p className="text-base md:text-xl text-white text-center md:text-left">{description}</p>
     </div>
   );
 }
@@ -587,37 +686,80 @@ function PrototypingIcon() {
 }
 
 // Project Card Component
-function ProjectCard({ 
-  name, 
-  year, 
-  category, 
-  image, 
-  figmaLink 
-}: { 
-  name: string; 
-  year: string; 
-  category: string; 
+function ProjectCard({
+  name,
+  year,
+  category,
+  tags,
+  image,
+  figmaLink,
+  delay = 0
+}: {
+  name: string;
+  year: string;
+  category: string;
+  tags: string[];
   image: string;
   figmaLink: string;
+  delay?: number;
 }) {
   return (
-    <a 
+    <a
       href={figmaLink}
       target="_blank"
       rel="noopener noreferrer"
-      className="w-full lg:w-[690px] h-auto overflow-hidden rounded-[30px] md:rounded-[50px] shadow-[0_20px_40px_0_rgba(0,0,0,0.25)] group relative hover:shadow-[0_30px_60px_0_rgba(255,255,255,0.15)] hover:scale-103 hover:-translate-y-1 transition-all duration-300 animate-on-scroll opacity-0"
+      className="w-full lg:w-[calc(50%-10px)] xl:w-[calc(50%-12px)] 2xl:w-[calc(50%-15px)] min-w-[280px] max-w-[690px] xl:max-w-[800px] 2xl:max-w-[900px] h-auto overflow-hidden rounded-[20px] md:rounded-[30px] lg:rounded-[40px] shadow-[0_20px_40px_0_rgba(0,0,0,0.25)] group relative hover:shadow-[0_30px_60px_0_rgba(255,255,255,0.2)] hover:scale-[1.02] hover:-translate-y-2 transition-all duration-500 animate-on-scroll opacity-0"
+      style={{ animationDelay: `${delay}s` }}
     >
-      <img
-        src={image}
-        alt={name}
-        className="w-full h-auto object-cover display-block brightness-75 group-hover:brightness-50 transition-all duration-300"
-      />
-      {/* Overlay на hover */}
-      <div className="absolute inset-0 flex flex-col justify-center items-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/40">
-        <h3 className="text-2xl md:text-3xl font-bold text-[#F8F8F8] text-center">{name}</h3>
-        <p className="text-base md:text-lg text-[#D3D3D3] mt-2">{year}</p>
-        <p className="text-sm md:text-base text-[#CFCFCF] mt-1">{category}</p>
-        <p className="text-base md:text-lg text-white font-semibold mt-6 px-4 py-2 rounded-lg border border-white/50 hover:bg-white/10 transition-all">→ Перейти в Figma</p>
+      {/* Image Container */}
+      <div className="relative w-full overflow-hidden rounded-[20px] md:rounded-[30px] lg:rounded-[40px]">
+        <img
+          src={image}
+          alt={name}
+          loading="lazy"
+          className="w-full h-auto object-cover display-block brightness-75 group-hover:brightness-40 transition-all duration-500 scale-100 group-hover:scale-105"
+        />
+      </div>
+
+      {/* Gradient Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-[20px] md:rounded-[30px] lg:rounded-[40px] pointer-events-none" />
+
+      {/* Content Overlay */}
+      <div className="absolute inset-0 flex flex-col justify-end items-center opacity-0 group-hover:opacity-100 transition-opacity duration-500 p-6 md:p-8 rounded-[20px] md:rounded-[30px] lg:rounded-[40px] pointer-events-none">
+        {/* Tags */}
+        <div className="flex flex-wrap justify-center gap-2 mb-3 translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-100">
+          {tags.map((tag, index) => (
+            <span
+              key={index}
+              className="px-3 py-1 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 text-white text-xs md:text-sm font-medium"
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
+
+        {/* Title & Info */}
+        <div className="text-center mb-4 translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-150">
+          <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-2">{name}</h3>
+          <div className="flex items-center justify-center gap-3 text-[#D3D3D3]">
+            <span className="text-sm md:text-base">{year}</span>
+            <span className="w-1 h-1 rounded-full bg-[#D3D3D3]" />
+            <span className="text-sm md:text-base">{category}</span>
+          </div>
+        </div>
+
+        {/* CTA Button */}
+        <div className="translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-200">
+          <button className="group/btn flex items-center gap-2 px-6 py-3 rounded-full bg-white text-black font-semibold hover:bg-white/90 hover:shadow-[0_0_20px_rgba(255,255,255,0.3)] transition-all duration-300 pointer-events-auto">
+            <span className="text-sm md:text-base">Смотреть проект</span>
+            <ArrowUpRight className="w-4 h-4 group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform" />
+          </button>
+        </div>
+      </div>
+
+      {/* Default Badge (visible when not hovering) */}
+      <div className="absolute top-4 left-4 px-3 py-1.5 rounded-full bg-black/60 backdrop-blur-sm border border-white/20">
+        <span className="text-white text-xs font-medium">{year}</span>
       </div>
     </a>
   );
