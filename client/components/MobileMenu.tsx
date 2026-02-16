@@ -9,7 +9,10 @@ export function MobileMenu({ onNavigate }: MobileMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleNavigate = (id: string) => {
-    onNavigate(id);
+    // Небольшая задержка чтобы меню успело закрыться
+    setTimeout(() => {
+      onNavigate(id);
+    }, 100);
     setIsOpen(false);
   };
 
@@ -17,11 +20,14 @@ export function MobileMenu({ onNavigate }: MobileMenuProps) {
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
+      document.documentElement.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
     }
     return () => {
       document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
     };
   }, [isOpen]);
 
@@ -30,7 +36,7 @@ export function MobileMenu({ onNavigate }: MobileMenuProps) {
       {/* Кнопка бургера */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="md:hidden w-10 h-10 rounded-full bg-white/10 border border-white/20 flex items-center justify-center hover:bg-white/20 hover:border-white/40 transition-all duration-300 z-50 relative"
+        className="md:hidden w-10 h-10 rounded-full bg-white/10 border border-white/20 flex items-center justify-center hover:bg-white/20 hover:border-white/40 transition-all duration-300 z-50 relative flex-shrink-0"
         aria-label="Меню"
         aria-expanded={isOpen}
       >
@@ -46,8 +52,11 @@ export function MobileMenu({ onNavigate }: MobileMenuProps) {
         className={`fixed inset-0 bg-[#171717]/98 backdrop-blur-xl z-40 flex flex-col items-center justify-center gap-8 transition-all duration-500 md:hidden ${
           isOpen ? "opacity-100 visible" : "opacity-0 invisible"
         }`}
+        style={{
+          pointerEvents: isOpen ? 'auto' : 'none',
+        }}
       >
-        <nav className="flex flex-col items-center gap-6">
+        <nav className="flex flex-col items-center gap-6 relative z-50">
           <button
             onClick={() => handleNavigate("hero")}
             className="text-2xl font-bold text-white hover:text-gray-300 transition-colors relative group"
