@@ -120,7 +120,7 @@
   }
 
   html, body {
-    scroll-behavior: auto;
+    scroll-behavior: smooth;
     scrollbar-width: none;
     scroll-padding-top: 80px;
   }

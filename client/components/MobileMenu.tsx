@@ -16,16 +16,21 @@ export function MobileMenu({ onNavigate }: MobileMenuProps) {
     setIsOpen(false);
   };
 
-  // Блокируем скролл когда меню открыто
+  // Блокируем скролл когда меню открыто и компенсируем ширину скроллбара
   useEffect(() => {
     if (isOpen) {
+      // Сохраняем текущий отступ
+      const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+      document.body.style.paddingRight = `${scrollbarWidth}px`;
       document.body.style.overflow = "hidden";
       document.documentElement.style.overflow = "hidden";
     } else {
+      document.body.style.paddingRight = "";
       document.body.style.overflow = "";
       document.documentElement.style.overflow = "";
     }
     return () => {
+      document.body.style.paddingRight = "";
       document.body.style.overflow = "";
       document.documentElement.style.overflow = "";
     };

@@ -264,7 +264,7 @@ export default function Index() {
           </div>
 
           {/* Scroll Indicator */}
-          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-bounce">
+          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-bounce hidden md:flex">
             <Layers className="w-5 h-5 text-white/50" />
             <div className="w-px h-12 bg-gradient-to-b from-white/50 to-transparent" />
           </div>
